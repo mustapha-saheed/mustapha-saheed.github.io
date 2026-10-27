@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mustapha Power Platform Portfolio</title>
+<meta name="description" content="Power Platform developer building Power Apps, Power Automate and SharePoint solutions that replace paper processes. Available for remote work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a single column read like a process sheet, where the hero is a live approval pipeline and every section is a numbered stage. */
+:root{
+  --paper:#F3F4EF;
+  --surface:#FFFFFF;
+  --ink:#15171C;
+  --muted:#5A5F6B;
+  --line:#D8DBD1;
+  --accent:#0B7A62;
+  --accent-soft:#DDEFE8;
+  --pending:#B7791F;
+  --pending-soft:#F6EBD6;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111317; --surface:#191C21; --ink:#ECEDEA; --muted:#9BA0AA; --line:#2B2F36;
+    --accent:#3CC29F; --accent-soft:#16332B; --pending:#E3AE52; --pending-soft:#352A16;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111317; --surface:#191C21; --ink:#ECEDEA; --muted:#9BA0AA; --line:#2B2F36;
+  --accent:#3CC29F; --accent-soft:#16332B; --pending:#E3AE52; --pending-soft:#352A16;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.08}
+p{margin:0}
+.mono{font-family:var(--mono)}
+
+/* Nav */
+header.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.brand{font-family:var(--display);font-weight:800;font-size:20px;text-decoration:none;letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+nav ul{display:flex;gap:clamp(12px,3vw,28px);list-style:none;margin:0;padding:0;font-size:15px}
+nav a{text-decoration:none;color:var(--muted)}
+nav a:hover{color:var(--ink)}
+
+/* Hero */
+.hero{padding:clamp(48px,8vw,96px) 0 clamp(40px,6vw,72px);display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px,5vw,64px);align-items:center}
+.avail{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);margin-bottom:20px}
+.avail i{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.hero h1{font-size:clamp(40px,6.2vw,72px);font-weight:800;letter-spacing:-.03em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lede{margin-top:22px;font-size:clamp(17px,1.6vw,19px);color:var(--muted);max-width:52ch}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink);cursor:pointer;font-family:var(--body);background:transparent;color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn:hover{transform:translateY(-1px)}
+
+/* Pipeline (signature element) */
+.pipe{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 22px 18px;box-shadow:0 18px 40px -24px rgba(0,0,0,.25)}
+.pipe-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:8px}
+.pipe-head .id{font-family:var(--mono);font-size:15px;font-weight:500}
+.pipe-head .amt{font-family:var(--mono);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:center;padding:9px 0;font-size:15px;position:relative}
+.steps li .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:var(--surface);justify-self:center;position:relative;z-index:1;transition:background .3s,border-color .3s}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:10px;top:30px;width:2px;height:calc(100% - 20px);background:var(--line)}
+.steps li .who{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.steps li.done .dot{background:var(--accent);border-color:var(--accent)}
+.steps li.done:not(:last-child)::after{background:var(--accent)}
+.steps li.now .dot{border-color:var(--pending);background:var(--pending-soft);box-shadow:0 0 0 5px var(--pending-soft)}
+.steps li.now .label{font-weight:600}
+.pipe-foot{margin-top:10px;padding-top:12px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.chip{font-family:var(--mono);font-size:12px;padding:3px 10px;border-radius:999px;background:var(--pending-soft);color:var(--pending);white-space:nowrap}
+.chip.ok{background:var(--accent-soft);color:var(--accent)}
+
+/* Figures */
+.figs{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.figs div{padding:22px 18px;border-right:1px solid var(--line)}
+.figs div:last-child{border-right:0}
+.figs b{display:block;font-family:var(--display);font-size:clamp(30px,4vw,42px);font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.figs span{font-size:14px;color:var(--muted)}
+
+/* Sections */
+section{padding:clamp(56px,8vw,96px) 0 0}
+.sec-head{display:grid;grid-template-columns:120px 1fr;gap:24px;margin-bottom:36px;align-items:baseline}
+.sec-head .no{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.04em}
+.sec-head h2{font-size:clamp(30px,4vw,44px);font-weight:700;letter-spacing:-.02em}
+.sec-head p{grid-column:2;color:var(--muted);max-width:62ch;margin-top:12px}
+.indent{margin-left:144px}
+
+/* Case study */
+.case{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.case-top{padding:clamp(24px,4vw,40px);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.case-top h3{font-size:clamp(24px,3vw,32px);font-weight:700;letter-spacing:-.015em}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tags span{font-size:13px;padding:4px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.ps dt{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:6px}
+.ps dd{margin:0 0 18px;color:var(--ink)}
+.ps dd:last-child{margin-bottom:0}
+
+.arch{padding:clamp(24px,4vw,40px);border-bottom:1px solid var(--line)}
+.arch h4,.feats h4,.code h4{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 18px;font-weight:500}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:stretch}
+.node{border:1.5px solid var(--line);border-radius:12px;padding:14px;background:var(--paper);position:relative}
+.node b{display:block;font-size:15px;margin-bottom:4px}
+.node small{display:block;font-size:13px;color:var(--muted);line-height:1.45}
+.node:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--accent);background:var(--surface);z-index:1;line-height:1}
+.node.key{border-color:var(--accent)}
+
+.feats{padding:clamp(24px,4vw,40px);border-bottom:1px solid var(--line)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 32px}
+.feat-grid h5{font-family:var(--display);font-size:18px;font-weight:700;margin:0 0 6px}
+.feat-grid p{font-size:15px;color:var(--muted)}
+
+.code{padding:clamp(24px,4vw,40px);display:grid;grid-template-columns:1fr 1fr;gap:28px}
+pre{margin:0;background:var(--ink);color:var(--paper);border-radius:12px;padding:18px 20px;font-family:var(--mono);font-size:13px;line-height:1.65;overflow-x:auto}
+pre .c{opacity:.55}
+pre .k{color:#7FD8BE}
+:root[data-theme="dark"] pre{background:#0A0B0E;color:#E7E8E4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) pre{background:#0A0B0E;color:#E7E8E4}}
+.code ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px;display:grid;gap:10px}
+.code ul b{color:var(--ink);font-weight:600}
+
+/* Skills */
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface)}
+.skill{padding:22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.skill:nth-child(3n){border-right:0}
+.skill:nth-last-child(-n+3){border-bottom:0}
+.skill h3{font-size:19px;font-weight:700;margin-bottom:10px}
+.skill ul{list-style:none;margin:0;padding:0;font-size:15px;color:var(--muted);display:grid;gap:4px}
+
+/* Process */
+.proc{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:p}
+.proc li{border-top:2px solid var(--ink);padding-top:16px;counter-increment:p}
+.proc li::before{content:"0" counter(p);font-family:var(--mono);font-size:13px;color:var(--accent);display:block;margin-bottom:8px}
+.proc h3{font-size:19px;font-weight:700;margin-bottom:6px}
+.proc p{font-size:15px;color:var(--muted)}
+
+/* Contact */
+.contact{margin:clamp(56px,8vw,96px) 0 0;background:var(--ink);color:var(--paper);border-radius:24px;padding:clamp(32px,6vw,64px);display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:end}
+.contact h2{font-size:clamp(32px,4.6vw,52px);font-weight:800;letter-spacing:-.025em}
+.contact p{opacity:.75;margin-top:14px;max-width:46ch}
+.contact .mail{font-family:var(--mono);font-size:clamp(16px,2vw,20px);word-break:break-all}
+.contact .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.contact .btn{border-color:var(--paper);color:var(--paper)}
+.contact .btn.primary{background:var(--paper);color:var(--ink)}
+.contact dl{margin:24px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px}
+.contact dt{opacity:.6}
+.contact dd{margin:0}
+footer{padding:32px 0 48px;color:var(--muted);font-size:14px}
+
+/* Responsive */
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .case-top,.code{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr 1fr}
+  .node:not(:last-child)::after{display:none}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .skills{grid-template-columns:1fr 1fr}
+  .skill:nth-child(3n){border-right:1px solid var(--line)}
+  .skill:nth-child(2n){border-right:0}
+  .skill:nth-last-child(-n+3){border-bottom:1px solid var(--line)}
+  .skill:nth-last-child(-n+2){border-bottom:0}
+  .proc{grid-template-columns:1fr 1fr}
+  .contact{grid-template-columns:1fr}
+  .sec-head{grid-template-columns:1fr;gap:8px}
+  .sec-head p{grid-column:1}
+  .indent{margin-left:0}
+  .figs{grid-template-columns:1fr 1fr}
+  .figs div:nth-child(2){border-right:0}
+  .figs div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:560px){
+  nav ul li.opt{display:none}
+  .flow,.feat-grid,.skills,.proc{grid-template-columns:1fr}
+  .skill,.skill:nth-child(3n){border-right:0}
+  .skill:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
+  .skill:last-child{border-bottom:0}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">Mustapha<span>.</span></a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li class="opt"><a href="#process">Process</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+
+  <div class="hero">
+    <div>
+      <div class="avail"><i></i>Mustapha · Available for remote work · Lagos, UTC+1</div>
+      <h1>I turn paper forms into <em>Power Apps</em> that route themselves.</h1>
+      <p class="lede">Self-taught Power Platform developer with two years of hands-on experience. I build canvas apps, Power Automate flows and SharePoint back ends that replace manual approvals, email chains and spreadsheets, with permissions and an audit trail built in from day one.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#work">See the case study</a>
+        <a class="btn" href="#contact">Get in touch</a>
+      </div>
+    </div>
+
+    <aside class="pipe" aria-label="Example: a cheque requisition moving through approval">
+      <div class="pipe-head">
+        <span class="id">CRF · HO0000005</span>
+        <span class="amt">₦ 1,250,000.00</span>
+      </div>
+      <ol class="steps" id="steps">
+        <li class="done"><span class="dot"></span><span class="label">Raised by staff</span><span class="who">Power Apps</span></li>
+        <li class="done"><span class="dot"></span><span class="label">Approved by HOD</span><span class="who">in-app</span></li>
+        <li class="now"><span class="dot"></span><span class="label">Approved by HOP</span><span class="who">in-app</span></li>
+        <li><span class="dot"></span><span class="label">Logged to register</span><span class="who">Excel</span></li>
+        <li><span class="dot"></span><span class="label">Processing</span><span class="who">Accounts</span></li>
+        <li><span class="dot"></span><span class="label">Paid</span><span class="who">Accounts</span></li>
+      </ol>
+      <div class="pipe-foot">
+        <span id="pipeNote">Waiting on Head of Practice</span>
+        <span class="chip" id="pipeChip">Pending</span>
+      </div>
+    </aside>
+  </div>
+
+  <div class="figs" aria-label="Project at a glance">
+    <div><b>8</b><span>Power Automate flows</span></div>
+    <div><b>4</b><span>app screens by role</span></div>
+    <div><b>2</b><span>approval tiers</span></div>
+    <div><b>7</b><span>tracked statuses</span></div>
+  </div>
+
+  <section id="work">
+    <div class="sec-head">
+      <span class="no">01 / WORK</span>
+      <h2>Featured project: digitising cheque requisitions for a multi-branch firm</h2>
+      <p>A professional-services firm with a head office and several branches ran payment requests on paper. I designed and built the replacement end to end on Microsoft 365.</p>
+    </div>
+
+    <article class="case">
+      <div class="case-top">
+        <div>
+          <h3>CRF: Cheque Requisition System</h3>
+          <div class="tags">
+            <span>Power Apps (canvas)</span><span>Power Automate</span><span>SharePoint Online</span><span>Excel Online</span><span>Exchange shared mailbox</span><span>Security groups</span>
+          </div>
+        </div>
+        <dl class="ps">
+          <dt>Problem</dt>
+          <dd>Paper forms passed by hand between staff, department heads, the Head of Practice and Accounts. Requests went missing, nobody could see status, and there was no record of who approved what.</dd>
+          <dt>Result</dt>
+          <dd>One app where staff raise requests, approvers decide with comments, and Accounts track payment. Every request is numbered, permissioned and logged automatically.</dd>
+        </dl>
+      </div>
+
+      <div class="arch">
+        <h4>How it fits together</h4>
+        <div class="flow">
+          <div class="node key"><b>Power App</b><small>My CRFs, Approvals, Accounts and Print screens, shown by role</small></div>
+          <div class="node"><b>SharePoint list</b><small>One item per request with item-level permissions</small></div>
+          <div class="node key"><b>Approval flows</b><small>HOD then HOP decision, called from the app</small></div>
+          <div class="node"><b>Excel register</b><small>Approved requests logged once for Accounts</small></div>
+          <div class="node"><b>Notifications</b><small>Emails from a shared mailbox at each status change</small></div>
+        </div>
+      </div>
+
+      <div class="feats">
+        <h4>What I built</h4>
+        <div class="feat-grid">
+          <div><h5>Per-branch numbering</h5><p>A counter list issues IDs like HO0000005 and ABJ0000001 the moment a request is saved.</p></div>
+          <div><h5>Item-level security</h5><p>Each request is shared only with its department or branch group and the Head of Practice. Staff never see each other's requests.</p></div>
+          <div><h5>In-app approvals</h5><p>Approvers act from an Approvals screen with comments. A flow checks the approver is allowed to decide at that stage before writing anything.</p></div>
+          <div><h5>Configurable routing</h5><p>Approvers live in a lookup list, so adding a department means adding a row and a group, not editing flows.</p></div>
+          <div><h5>Accounts workspace</h5><p>Accounts set Processing or Paid, record cheque numbers and deductions, and every change is written to an activity log.</p></div>
+          <div><h5>Register and print</h5><p>Approved requests sync to an Excel table for reconciliation, and any request prints as a clean branded form.</p></div>
+        </div>
+      </div>
+
+      <div class="code">
+        <div>
+          <h4>Power Fx: role-aware gallery</h4>
+<pre><span class="c">// Accounts see the register queue;
+// everyone else sees only their own CRFs</span>
+<span class="k">SortByColumns</span>(
+  <span class="k">Filter</span>(Requisitions,
+    (!varIsAccounts
+      || 'Created By'.Email = <span class="k">User</span>().Email
+      || LoggedToRegister = <span class="k">false</span>)
+    && <span class="k">StartsWith</span>(Title, txtSearch.Text)
+  ),
+  "ID", SortOrder.Descending
+)</pre>
+        </div>
+        <div>
+          <h4>Engineering decisions</h4>
+          <ul>
+            <li><b>Least privilege.</b> Users only have View on items; writes go through flows that run under a service owner's connections.</li>
+            <li><b>Server-side checks.</b> The approval flow works out the stage and the allowed approvers itself, so the app can't be used to skip a tier.</li>
+            <li><b>Idempotent logging.</b> A trigger condition and a LoggedToRegister flag make sure each request reaches Excel exactly once.</li>
+            <li><b>Handover ready.</b> I wrote a runbook so IT can add a new department without a developer.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section id="skills">
+    <div class="sec-head">
+      <span class="no">02 / SKILLS</span>
+      <h2>The Microsoft 365 stack, end to end</h2>
+    </div>
+    <div class="skills">
+      <div class="skill"><h3>Power Apps</h3><ul><li>Canvas apps</li><li>Power Fx formulas</li><li>Role-based screens</li><li>Responsive forms</li></ul></div>
+      <div class="skill"><h3>Power Automate</h3><ul><li>Approval workflows</li><li>Power Apps (V2) triggers</li><li>Trigger conditions</li><li>Error handling</li></ul></div>
+      <div class="skill"><h3>SharePoint Online</h3><ul><li>List design</li><li>Item-level permissions</li><li>Custom permission levels</li><li>Site administration</li></ul></div>
+      <div class="skill"><h3>Microsoft 365</h3><ul><li>Security groups</li><li>Shared mailboxes</li><li>Exchange "Send as"</li><li>Entra ID basics</li></ul></div>
+      <div class="skill"><h3>Data &amp; reporting</h3><ul><li>Excel Online tables</li><li>Audit logging</li><li>Printable forms</li><li>Data cleanup</li></ul></div>
+      <div class="skill"><h3>Delivery</h3><ul><li>Requirements with users</li><li>End-to-end testing</li><li>Runbooks &amp; guides</li><li>Go-live support</li></ul></div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="sec-head">
+      <span class="no">03 / PROCESS</span>
+      <h2>How I work with you</h2>
+    </div>
+    <ol class="proc">
+      <li><h3>Map the process</h3><p>I start from the paper form and the people who touch it, and agree every status and who can move it.</p></li>
+      <li><h3>Model the data</h3><p>Lists, permissions and groups come first, so security is designed in, not added later.</p></li>
+      <li><h3>Build in small steps</h3><p>Flows and screens ship one at a time, each tested with real accounts.</p></li>
+      <li><h3>Hand over cleanly</h3><p>Runbooks, a staff guide and clean test data so your team can own it.</p></li>
+    </ol>
+  </section>
+
+  <section id="contact" style="padding-top:0">
+    <div class="contact">
+      <div>
+        <h2>Have a process still running on paper?</h2>
+        <p>I'm open to full-time remote roles and contract work with teams in Europe, the UK, the Middle East and North America.</p>
+        <dl>
+          <dt>Experience</dt><dd>2 years, self-taught</dd>
+          <dt>Based in</dt><dd>Lagos, Nigeria (UTC+1)</dd>
+          <dt>Works with</dt><dd>UK and EU hours; US mornings</dd>
+        </dl>
+      </div>
+      <div>
+        <div class="mail">mustapha.saheed0007@gmail.com</div>
+        <div class="row">
+          <a class="btn primary" href="mailto:mustapha.saheed0007@gmail.com">Email me</a>
+          <button class="btn" type="button" id="copyBtn">Copy email</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">© 2026 Mustapha · Power Platform Developer</footer>
+
+<script>
+(function(){
+  var btn=document.getElementById('copyBtn');
+  btn.addEventListener('click',function(){
+    var done=function(t){btn.textContent=t;setTimeout(function(){btn.textContent='Copy email'},1800)};
+    try{navigator.clipboard.writeText('mustapha.saheed0007@gmail.com').then(function(){done('Copied')},function(){done('Select and copy above')})}
+    catch(e){done('Select and copy above')}
+  });
+
+  // Advance the hero pipeline: one orchestrated moment, starting from a visible state.
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var items=[].slice.call(document.querySelectorAll('#steps li'));
+  var note=document.getElementById('pipeNote'), chip=document.getElementById('pipeChip');
+  var notes=['Waiting on Head of Department','Waiting on Head of Practice','Logging to the Accounts register','With Accounts','With Accounts','Cheque issued'];
+  var cur=2;
+  function render(){
+    items.forEach(function(li,i){li.className = i<cur ? 'done' : (i===cur ? 'now' : '');});
+    if(cur>=items.length-1){items[items.length-1].className='done';note.textContent=notes[5];chip.textContent='Paid';chip.className='chip ok';}
+    else{note.textContent=notes[cur];chip.textContent=cur<3?'Pending':(cur===3?'Approved':'Processing');chip.className='chip';}
+  }
+  setInterval(function(){cur = cur>=items.length-1 ? 1 : cur+1; render();},2200);
+})();
+</script>
+</body>
+</html>
